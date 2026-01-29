@@ -1,0 +1,46 @@
+{
+    "name": "wpfluent/micro",
+    "type": "project",
+    "description": "WPFluent - The best framework to build WordPress plugins.",
+    "keywords": [
+        "WordPress",
+        "framework",
+        "WPFluent"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Sheikh Heera",
+            "email": "heera.sheikh77@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "FluentCartElementorBlocks\\App\\": "app/",
+            "FluentCartElementorBlocks\\Dev\\": "dev/"
+        },
+        "classmap": [],
+        "files": []
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "2.0.x-dev"
+        },
+        "wpfluent": {
+            "namespace": {
+                "current": "FluentCartElementorBlocks",
+                "parent": "FluentCart"
+            }
+        }
+    },
+    "scripts": {
+        "post-update-cmd": [
+            "FluentCartElementorBlocks\\Dev\\ComposerScript::run"
+        ],
+        "post-install-cmd": [
+            "FluentCartElementorBlocks\\Dev\\ComposerScript::run"
+        ]
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}

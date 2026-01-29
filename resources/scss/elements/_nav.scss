@@ -1,0 +1,178 @@
+@import "../variables";
+
+.#{$slug} {
+    &main-menu-items {
+        display: block;
+        position: relative;
+        margin-bottom: 20px;
+        background: white;
+        margin-left: -20px;
+        padding-left: 20px;
+        overflow: hidden;
+
+        .menu_logo_holder {
+            max-height: 40px;
+            margin-right: 10px;
+            margin-left: 10px;
+            display: inline-block;
+            vertical-align: middle;
+            padding-top: 10px;
+            a {
+                display: block;
+                overflow: hidden;
+                line-height: 0;
+                img {
+                    padding: 2px 0px;
+                    height: 36px;
+                    outline: none;
+                }
+                &:focus {
+                    outline: none;
+                    box-shadow: none;
+                }
+                span {
+                    position: absolute;
+                    top: 20px;
+                    color: black;
+                    padding-left: 5px;
+                    font-size: 10px;
+                }
+            }
+        }
+
+        ul.#{$slug}menu {
+            display: inline-block;
+            list-style: none;
+            margin: 0 0 0 20px;
+            padding: 0 20px 0 0;
+            vertical-align: top;
+
+            li {
+                display: inline-block;
+                padding: 0;
+                margin: 0;
+
+                &.active_item {
+                    border-bottom: 2px solid #9d95d8;
+                    a {
+                        color: black;
+                    }
+                }
+
+                a:focus {
+                    box-shadow: none;
+                    outline: 0 solid transparent;
+                }
+
+                .#{$slug}menu_primary {
+                    padding: 20px 20px;
+                    display: block;
+                    font-size: 14px;
+                    line-height: 100%;
+                    text-decoration: none;
+                    color: #909399;
+
+                    span {
+                        font-size: 14px;
+                        line-height: 17px;
+                        margin-bottom: -6px;
+                    }
+
+                    &:hover {
+                        color: black;
+                    }
+                }
+
+                .#{$slug}submenu_items {
+                    display: none;
+                }
+            }
+
+            li.#{$slug}has_sub_items {
+                position: relative;
+
+                .#{$slug}submenu_items a {
+                    width: 100%;
+                    display: block;
+                    text-decoration: none;
+                    padding: 10px 15px;
+                }
+
+                &:hover {
+                    > .#{$slug}submenu_items {
+                        display: block;
+                        z-index: 9999999;
+                        overflow: hidden;
+                        top: 90%;
+                        left: 0;
+                        position: absolute;
+                        min-width: 10rem;
+                        padding: .5rem 0;
+                        margin: .125rem 0 0;
+                        font-size: 1rem;
+                        color: #909399;
+                        text-align: left;
+                        list-style: none;
+                        background-color: #fff;
+                        background-clip: padding-box;
+                        border: 1px solid rgba(0, 0, 0, .15);
+                        border-radius: .25rem;
+
+                        a {
+                            color: #909399;
+
+                            &:hover {
+                                background-color: #f8f9fa;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        .#{$slug}handheld {
+            display: none;
+        }
+        @media all and (max-width: 1024px) {
+            margin-right: 10px;
+            ul.#{$slug}menu {
+                display: none;
+            }
+            ul.#{$slug}menu.#{$slug}menu_open {
+                display: block;
+                border-top: 3px solid #f1f1f1;
+
+                li.#{$slug}menu_item {
+                    display: block;
+                    width: 100%;
+                }
+
+                .#{$slug}menu_primary span {
+                    float: right;
+                }
+
+                .#{$slug}submenu_items {
+                    position: relative !important;
+                    padding-left: 30px !important;
+                }
+            }
+            .#{$slug}handheld {
+                display: inline-block;
+                float: right;
+                margin: 15px 15px 0px 0px;
+
+                span {
+                    font-size: 30px;
+                    width: 100%;
+                }
+            }
+            ul.#{$slug}menu.frame_secondary_menu {
+                float: none !important;
+                border-top: 0 !important;
+            }
+        }
+    }
+}
+.#{$slug}secondary_menu.#{$slug}menu {
+    float: right;
+}

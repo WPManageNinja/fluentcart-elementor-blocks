@@ -1,0 +1,15 @@
+#MacOs
+.DS_Store
+#IDE
+/.idea
+
+#assets
+assets/*
+!assets/.gitkeep
+
+#Node Packages
+node_modules
+yarn.lock
+package-lock.json
+composer.lock
+/builds
