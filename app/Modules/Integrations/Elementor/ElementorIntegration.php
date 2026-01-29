@@ -7,6 +7,7 @@ use FluentCart\App\Helpers\Helper;
 use FluentCartElementorBlocks\App\Modules\Integrations\Elementor\Controls\ProductSelectControl;
 use FluentCartElementorBlocks\App\Modules\Integrations\Elementor\Widgets\AddToCartWidget;
 use FluentCartElementorBlocks\App\Modules\Integrations\Elementor\Widgets\BuyNowWidget;
+use FluentCartElementorBlocks\App\Modules\Integrations\Elementor\Widgets\MiniCartWidget;
 use FluentCartElementorBlocks\App\Utils\Enqueuer\Enqueue;
 
 class ElementorIntegration
@@ -26,6 +27,7 @@ class ElementorIntegration
     {
         $widgets_manager->register(new AddToCartWidget());
         $widgets_manager->register(new BuyNowWidget());
+        $widgets_manager->register(new MiniCartWidget());
     }
 
     public function registerControls($controls_manager)

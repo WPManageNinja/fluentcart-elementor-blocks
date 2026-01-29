@@ -280,7 +280,6 @@ class AddToCartWidget extends Widget_Base
         // We wrap it to ensure our selectors match if needed, but the selectors target .wp-block-button__link directly
         // which is what ProductRenderer outputs.
 
-
         ?>
         <div class="fluent-cart-elementor-add-to-cart">
             <?php
