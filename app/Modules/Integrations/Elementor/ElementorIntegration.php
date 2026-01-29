@@ -40,7 +40,7 @@ class ElementorIntegration
 
         Enqueue::script(
             'fluent-cart-elementor-editor',
-            'elementor/editor.js',
+            'elementor/product-select-controll.js',
             ['elementor-editor', 'jquery'],
             FLUENTCART_VERSION,
             true

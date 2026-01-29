@@ -1,40 +1,22 @@
 import {defineConfig} from 'vite'
 import {viteStaticCopy} from 'vite-plugin-static-copy'
-import vue from '@vitejs/plugin-vue'
-import liveReload from 'vite-plugin-live-reload';
 import path from "path";
-import AutoImport from 'unplugin-auto-import/vite'
 
-const {ElementPlusResolver} = require("unplugin-vue-components/resolvers");
-const Components = require("unplugin-vue-components/vite");
 // https://vitejs.dev/config/
 
 //Add All css and js here
 //Important: Key must be output filepath without extension, and value will be the file source
 const inputs = [
-    'resources/admin/app.js',
-    'resources/admin/global_admin.js',
-    'resources/scss/admin.scss'
+    'resources/elementor/product-select-controll.js',
 ]
 export default defineConfig({
     plugins:
         [
-            vue(),
-            liveReload([
-                `${__dirname}/**/*\.php`,
-            ]),
             viteStaticCopy({
                 targets: [
                     {src: 'resources/images', dest: ''},
                 ]
-            }),
-            AutoImport({
-                resolvers: [ElementPlusResolver()],
-            }),
-            Components({
-                resolvers: [ElementPlusResolver()],
-                directives: false
-            }),
+            })
         ],
 
     build: {
@@ -51,8 +33,6 @@ export default defineConfig({
             output: {
                 chunkFileNames: '[name].js',
                 entryFileNames: '[name].js',
-
-
             },
         },
     },
