@@ -60,6 +60,9 @@ class AddToCartWidget extends Widget_Base
                 'description' => esc_html__('Search and select the product variation.', 'fluent-cart'),
                 'default' => '',
                 'placeholder' => esc_html__('Search for a variation...', 'fluent-cart'),
+                'query_params' => [
+                        'subscription_status' => 'not_subscribable'
+                ]
             ]
         );
 

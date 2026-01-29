@@ -25,6 +25,7 @@ class ProductController extends Controller
         $subscription_status = Arr::get($data,'subscription_status');
 
         if($subscription_status === 'not_subscribable'){
+
             $productsQuery = $productsQuery->with(['variants' => function ($query) use ($includeIds) {
                 $query->where('payment_type', '!=', 'subscription');
             }]);
