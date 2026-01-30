@@ -8,8 +8,10 @@ use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
 use Elementor\Group_Control_Background;
+use FluentCart\Api\Taxonomy;
 use FluentCart\App\Hooks\Handlers\ShortCodes\ShopAppHandler;
 use FluentCart\App\Modules\Templating\AssetLoader;
+use FluentCart\Framework\Support\Str;
 
 class ShopAppWidget extends Widget_Base
 {
@@ -511,6 +513,38 @@ class ShopAppWidget extends Widget_Base
         $isEditor = \Elementor\Plugin::$instance->editor->is_edit_mode();
 
         AssetLoader::loadProductArchiveAssets();
+
+        $enableFilter = ($settings['enable_filter'] ?? '') === 'yes';
+
+        // Build custom_filters for ShopAppRenderer when filtering is enabled
+        // The renderer uses custom_filters (not the shortcode 'filters' attribute) to
+        // determine isFilterEnabled and which taxonomy filters to display.
+        $customFilters = [];
+        $filters = [];
+        $liveFilter = ($settings['live_filter'] ?? '') === 'yes';
+
+        if ($enableFilter) {
+            $taxonomies = Taxonomy::getTaxonomies();
+
+            // custom_filters drives the ShopAppRenderer filter UI
+            $customFilters = [
+                'enabled'     => true,
+                'live_filter' => $liveFilter,
+                'taxonomies'  => array_values($taxonomies),
+            ];
+
+            // filters drives the ShopAppHandler query-level filter config
+            foreach ($taxonomies as $taxonomy) {
+                $filters[$taxonomy] = [
+                    'enabled'     => true,
+                    'filter_type' => 'options',
+                    'is_meta'     => true,
+                    'label'       => Str::headline($taxonomy),
+                    'multiple'    => false,
+                ];
+            }
+        }
+
         // Build shortcode attributes from widget settings
         $shortcodeAtts = [
             'per_page'                         => $settings['per_page'] ?? 10,
@@ -521,24 +555,25 @@ class ShopAppWidget extends Widget_Base
             'product_box_grid_size'            => $settings['product_box_grid_size'] ?? 4,
             'product_grid_size'                => $settings['product_box_grid_size'] ?? 4,
             'use_default_style'                => ($settings['use_default_style'] ?? '') === 'yes' ? 1 : 0,
-            'enable_filter'                    => ($settings['enable_filter'] ?? '') === 'yes' ? 1 : 0,
-            'live_filter'                      => ($settings['live_filter'] ?? '') === 'yes' ? 1 : 0,
+            'enable_filter'                    => $enableFilter ? 1 : 0,
+            'live_filter'                      => $liveFilter ? 1 : 0,
             'enable_wildcard_filter'           => ($settings['enable_wildcard_filter'] ?? '') === 'yes' ? 1 : 0,
             'enable_wildcard_for_post_content' => ($settings['enable_wildcard_for_post_content'] ?? '') === 'yes' ? 1 : 0,
+            'filters'                          => $filters,
+            'custom_filters'                   => $customFilters,
         ];
 
         // Build a transient cache key based on the relevant settings
         $cacheKey = 'fce_shop_app_' . md5(wp_json_encode($shortcodeAtts));
-
+        
         if (!$isEditor) {
             $cached = get_transient($cacheKey);
+
             if ($cached) {
                 echo $cached; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 return;
             }
         }
-
-
 
         $handler = new ShopAppHandler();
         $output  = $handler->handelShortcodeCall($shortcodeAtts);
