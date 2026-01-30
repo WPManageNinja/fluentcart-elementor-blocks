@@ -7,9 +7,10 @@ use Elementor\Controls_Manager;
 use Elementor\Group_Control_Typography;
 use Elementor\Group_Control_Border;
 use Elementor\Group_Control_Box_Shadow;
+use Elementor\Repeater;
 use Elementor\Group_Control_Background;
 use FluentCart\Api\Taxonomy;
-use FluentCart\App\Hooks\Handlers\ShortCodes\ShopAppHandler;
+use FluentCartElementorBlocks\App\Modules\Integrations\Elementor\Renderers\ElementorShopAppHandler;
 use FluentCart\App\Modules\Templating\AssetLoader;
 use FluentCart\Framework\Support\Str;
 
@@ -43,6 +44,7 @@ class ShopAppWidget extends Widget_Base
     protected function register_controls()
     {
         $this->registerContentControls();
+        $this->registerCardLayoutControls();
         $this->registerFilterControls();
         $this->registerStyleControls();
     }
@@ -163,6 +165,53 @@ class ShopAppWidget extends Widget_Base
                 'label_off'    => esc_html__('No', 'fluent-cart'),
                 'return_value' => 'yes',
                 'default'      => 'yes',
+            ]
+        );
+
+        $this->end_controls_section();
+    }
+
+    private function registerCardLayoutControls()
+    {
+        $this->start_controls_section(
+            'card_layout_section',
+            [
+                'label' => esc_html__('Product Card Layout', 'fluent-cart'),
+                'tab'   => Controls_Manager::TAB_CONTENT,
+            ]
+        );
+
+        $repeater = new Repeater();
+
+        $repeater->add_control(
+            'element_type',
+            [
+                'label'   => esc_html__('Element', 'fluent-cart'),
+                'type'    => Controls_Manager::SELECT,
+                'default' => 'image',
+                'options' => [
+                    'image'   => esc_html__('Image', 'fluent-cart'),
+                    'title'   => esc_html__('Title', 'fluent-cart'),
+                    'excerpt' => esc_html__('Excerpt', 'fluent-cart'),
+                    'price'   => esc_html__('Price', 'fluent-cart'),
+                    'button'  => esc_html__('Button', 'fluent-cart'),
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'card_elements',
+            [
+                'label'       => esc_html__('Card Elements', 'fluent-cart'),
+                'type'        => Controls_Manager::REPEATER,
+                'fields'      => $repeater->get_controls(),
+                'default'     => [
+                    ['element_type' => 'image'],
+                    ['element_type' => 'title'],
+                    ['element_type' => 'price'],
+                    ['element_type' => 'button'],
+                ],
+                'title_field' => '{{{ element_type.charAt(0).toUpperCase() + element_type.slice(1) }}}',
             ]
         );
 
@@ -563,9 +612,17 @@ class ShopAppWidget extends Widget_Base
             'custom_filters'                   => $customFilters,
         ];
 
+        // Extract card layout elements from the repeater
+        $cardElements = $settings['card_elements'] ?? [
+            ['element_type' => 'image'],
+            ['element_type' => 'title'],
+            ['element_type' => 'price'],
+            ['element_type' => 'button'],
+        ];
+
         // Build a transient cache key based on the relevant settings
-        $cacheKey = 'fce_shop_app_' . md5(wp_json_encode($shortcodeAtts));
-        
+        $cacheKey = 'fce_shop_app_' . md5(wp_json_encode($shortcodeAtts) . wp_json_encode($cardElements));
+
         if (!$isEditor) {
             $cached = get_transient($cacheKey);
 
@@ -575,7 +632,8 @@ class ShopAppWidget extends Widget_Base
             }
         }
 
-        $handler = new ShopAppHandler();
+        $handler = new ElementorShopAppHandler();
+        $handler->setCardElements($cardElements);
         $output  = $handler->handelShortcodeCall($shortcodeAtts);
 
         $html = '<div class="fluent-cart-elementor-shop-app">' . $output . '</div>';
