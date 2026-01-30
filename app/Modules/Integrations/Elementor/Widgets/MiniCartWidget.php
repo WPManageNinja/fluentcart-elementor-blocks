@@ -43,6 +43,20 @@ class MiniCartWidget extends Widget_Base
         return ['cart', 'mini cart', 'commerce', 'fluent'];
     }
 
+    public function get_style_depends()
+    {
+        // Register+enqueue FluentCart mini cart styles so they're
+        // available in the Elementor editor preview iframe.
+        AssetLoader::loadMiniCartAssets();
+
+        $app = \FluentCart\App\App::getInstance();
+        $slug = $app->config->get('app.slug');
+
+        return [
+            $slug . '-mini-cart',
+        ];
+    }
+
     protected function register_controls()
     {
         // Style Section
@@ -223,22 +237,24 @@ class MiniCartWidget extends Widget_Base
 
 
         (new CartLoader())->registerDependency();
+        AssetLoader::loadMiniCartAssets();
+
         $cart = CartHelper::getCart(null, false);
         $itemCount = 0;
+        $cartData = [];
 
         if ($cart) {
-            $itemCount = count($cart->cart_data ?? []);
+            $cartData= $cart->cart_data ?? [];
+            $itemCount = count($cartData);
         }
 
-        $cartItems = Arr::get(CartResource::getStatus(), 'cart_data', []);
-
-        $cartDrawerRenderer = new MiniCartRenderer($cartItems, [
+        $miniCartRenderer = new MiniCartRenderer($cartData, [
             'item_count' => $itemCount
         ]);
         
         $attributes = [
                 'is_shortcode' => true,
-                'buttonClass' => 'fluent_cart_mini_cart_trigger',
+                'button_class' => 'fluent_cart_mini_cart_trigger',
         ];
         $settings = $this->get_settings_for_display();
         //ds($settings);
@@ -246,7 +262,7 @@ class MiniCartWidget extends Widget_Base
         ?>
         <div class="fluent-cart-elementor-mini-cart">
             <?php
-            $cartDrawerRenderer->renderMiniCart($attributes);
+            $miniCartRenderer->renderMiniCart($attributes);
             ?>
         </div>
         <?php
