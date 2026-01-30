@@ -372,6 +372,93 @@ class ShopAppWidget extends Widget_Base
 
         $this->end_controls_section();
 
+        // Product Image Style
+        $this->start_controls_section(
+            'image_style_section',
+            [
+                'label' => esc_html__('Product Image', 'fluent-cart'),
+                'tab'   => Controls_Manager::TAB_STYLE,
+            ]
+        );
+
+        $this->add_responsive_control(
+            'image_height',
+            [
+                'label'      => esc_html__('Height', 'fluent-cart'),
+                'type'       => Controls_Manager::SLIDER,
+                'size_units' => ['px', 'em', 'vh'],
+                'range'      => [
+                    'px' => ['min' => 50, 'max' => 800],
+                    'em' => ['min' => 3, 'max' => 50],
+                    'vh' => ['min' => 5, 'max' => 100],
+                ],
+                'selectors'  => [
+                    '{{WRAPPER}} .fct-product-card-image' => 'height: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'image_object_fit',
+            [
+                'label'     => esc_html__('Object Fit', 'fluent-cart'),
+                'type'      => Controls_Manager::SELECT,
+                'default'   => '',
+                'options'   => [
+                    ''        => esc_html__('Default', 'fluent-cart'),
+                    'cover'   => esc_html__('Cover', 'fluent-cart'),
+                    'contain' => esc_html__('Contain', 'fluent-cart'),
+                    'fill'    => esc_html__('Fill', 'fluent-cart'),
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .fct-product-card-image' => 'object-fit: {{VALUE}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Border::get_type(),
+            [
+                'name'     => 'image_border',
+                'selector' => '{{WRAPPER}} .fct-product-card-image',
+            ]
+        );
+
+        $this->add_control(
+            'image_border_radius',
+            [
+                'label'      => esc_html__('Border Radius', 'fluent-cart'),
+                'type'       => Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', '%', 'em'],
+                'selectors'  => [
+                    '{{WRAPPER}} .fct-product-card-image'      => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                    '{{WRAPPER}} .fct-product-card-image-wrap' => 'border-radius: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_group_control(
+            Group_Control_Box_Shadow::get_type(),
+            [
+                'name'     => 'image_box_shadow',
+                'selector' => '{{WRAPPER}} .fct-product-card-image',
+            ]
+        );
+
+        $this->add_responsive_control(
+            'image_padding',
+            [
+                'label'      => esc_html__('Padding', 'fluent-cart'),
+                'type'       => Controls_Manager::DIMENSIONS,
+                'size_units' => ['px', 'em', '%'],
+                'selectors'  => [
+                    '{{WRAPPER}} .fct-product-card-image-wrap' => 'padding: {{TOP}}{{UNIT}} {{RIGHT}}{{UNIT}} {{BOTTOM}}{{UNIT}} {{LEFT}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->end_controls_section();
+
         // Product Title Style
         $this->start_controls_section(
             'title_style_section',
