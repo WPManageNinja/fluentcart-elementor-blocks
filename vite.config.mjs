@@ -7,7 +7,7 @@ import path from "path";
 //Add All css and js here
 //Important: Key must be output filepath without extension, and value will be the file source
 const inputs = [
-    'resources/elementor/product-select-controll.js',
+    'resources/elementor/product-variation-select-control.js',
 ]
 export default defineConfig({
     plugins:

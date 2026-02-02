@@ -7,7 +7,7 @@ use FluentCart\App\Helpers\Helper;
 use FluentCart\App\Services\Renderer\MiniCartRenderer;
 use FluentCart\App\Services\Renderer\ProductCardRender;
 use FluentCart\Framework\Support\Arr;
-use FluentCartElementorBlocks\App\Modules\Integrations\Elementor\Controls\ProductSelectControl;
+use FluentCartElementorBlocks\App\Modules\Integrations\Elementor\Controls\ProductVariationSelectControl;
 use FluentCartElementorBlocks\App\Modules\Integrations\Elementor\Renderers\ElementorShopAppRenderer;
 use FluentCartElementorBlocks\App\Modules\Integrations\Elementor\Widgets\AddToCartWidget;
 use FluentCartElementorBlocks\App\Modules\Integrations\Elementor\Widgets\BuyNowWidget;
@@ -43,7 +43,7 @@ class ElementorIntegration
 
     public function registerControls($controls_manager)
     {
-        $controls_manager->register(new ProductSelectControl());
+        $controls_manager->register(new ProductVariationSelectControl());
     }
 
     public function preloadProductCollectionsAjax($view, $args)
@@ -90,7 +90,7 @@ class ElementorIntegration
 
         Enqueue::script(
             'fluent-cart-elementor-editor',
-            'elementor/product-select-controll.js',
+            'elementor/product-variation-select-control.js',
             ['elementor-editor', 'jquery'],
             FLUENTCART_VERSION,
             true

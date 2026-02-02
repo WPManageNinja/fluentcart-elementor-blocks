@@ -8,10 +8,10 @@ if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly.
 }
 
-class ProductSelectControl extends Control_Select2
+class ProductVariationSelectControl extends Control_Select2
 {
     public function get_type()
     {
-        return 'fluent_product_select';
+        return 'fluent_product_variation_select';
     }
 }
