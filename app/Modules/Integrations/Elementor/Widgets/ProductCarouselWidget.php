@@ -896,8 +896,25 @@ class ProductCarouselWidget extends Widget_Base
     {
         $arrowsSize = $carouselSettings['arrowsSize'] ?? 'md';
         $paginationType = $carouselSettings['paginationType'] ?? 'dots';
+        $isEditor = \Elementor\Plugin::$instance->editor->is_edit_mode();
+        $editorClass = $isEditor ? ' fct-elementor-preview' : '';
         ?>
-        <div class="fluent-cart-elementor-product-carousel">
+        <?php if ($isEditor) : ?>
+        <style>
+            .fct-elementor-preview a,
+            .fct-elementor-preview button,
+            .fct-elementor-preview .fct-button,
+            .fct-elementor-preview [data-fct-product-card] {
+                pointer-events: none;
+            }
+            .fct-elementor-preview .swiper-button-prev,
+            .fct-elementor-preview .swiper-button-next,
+            .fct-elementor-preview .swiper-pagination {
+                pointer-events: auto;
+            }
+        </style>
+        <?php endif; ?>
+        <div class="fluent-cart-elementor-product-carousel<?php echo esc_attr($editorClass); ?>">
             <div class="fct-product-carousel-wrapper">
                 <div class="swiper fct-product-carousel"
                      data-fluent-cart-product-carousel
