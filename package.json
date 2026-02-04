@@ -4,7 +4,10 @@
     "watch": "npm run dev",
     "build": "node resources/vite/vite.js --build && vite build",
     "production": "npm run build",
-    "prod": "npm run build"
+    "prod": "npm run build",
+    "build:zip": "npm run build && npm run pack",
+    "pack": "node resources/dev/zip.js",
+    "zip": "node resources/dev/zip.js"
   },
   "dependencies": {
     "lodash": "^4.17.23"

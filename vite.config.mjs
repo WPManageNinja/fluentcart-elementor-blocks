@@ -8,6 +8,9 @@ import path from "path";
 //Important: Key must be output filepath without extension, and value will be the file source
 const inputs = [
     'resources/elementor/product-variation-select-control.js',
+    'resources/elementor/product-carousel-elementor.js',
+    'resources/elementor/product-select-control.js',
+
 ]
 export default defineConfig({
     plugins:
