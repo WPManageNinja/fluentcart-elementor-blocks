@@ -71,6 +71,20 @@ class DummyCheckoutRenderer
                     </div>
                     <div class="fce-checkout-summary-column fct_checkout_summary <?php echo $stickySummary ? 'is-sticky' : ''; ?>">
                         <?php $this->renderSummaryElements(); ?>
+
+                        <?php
+                            $summaryElements = $this->settings['summary_elements'] ?? [];
+
+                            foreach ($summaryElements as $element) {
+                                $type = $element['element_type'] ?? '';
+
+                                if ($type === 'order_bump') {
+                                    $this->renderOrderBump();
+                                    break;
+                                }
+                            }
+
+                        ?>
                     </div>
                 </div>
             <?php else: ?>
@@ -409,9 +423,9 @@ class DummyCheckoutRenderer
                 $this->renderOrderSummaryItems();
             }
 
-            if ($type === 'order_bump') {
-                $this->renderOrderBump();
-            }
+//            if ($type === 'order_bump') {
+//                $this->renderOrderBump();
+//            }
         }
 
         if (!empty($footerElements)) {
@@ -570,7 +584,7 @@ class DummyCheckoutRenderer
     {
         ?>
         <div class="fce-order-bump-wrapper fct_order_bump_section">
-            <div class="fct_order_bump_item" style="border: 1px dashed #ddd; padding: 15px; border-radius: 4px; margin-top: 15px;">
+            <div class="fct_order_bump_item" style="border: 1px solid #ddd; padding: 16px; border-radius: 8px; margin-top: 15px; background: #ffffff;">
                 <label class="fct_checkbox_label">
                     <input type="checkbox" disabled>
                     <span class="fct_order_bump_title"><?php esc_html_e('Add Extended Warranty - $9.99', 'fluent-cart'); ?></span>
