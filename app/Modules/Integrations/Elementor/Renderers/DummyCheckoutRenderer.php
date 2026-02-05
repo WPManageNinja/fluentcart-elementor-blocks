@@ -2,6 +2,11 @@
 
 namespace FluentCartElementorBlocks\App\Modules\Integrations\Elementor\Renderers;
 
+use FluentCart\App\Services\Renderer\CheckoutRenderer;
+use FluentCart\App\Models\Cart;
+use FluentCart\App\Vite;
+
+
 /**
  * Dummy Checkout Renderer for Elementor Editor Preview
  * Renders a realistic checkout preview with mock data
@@ -10,9 +15,15 @@ class DummyCheckoutRenderer
 {
     protected $settings;
 
+    protected $cart;
+
+    protected $requireShipping = false;
+
     public function __construct(array $settings)
     {
         $this->settings = $settings;
+        $this->cart = new Cart();
+        $this->requireShipping = $this->cart->requireShipping();
     }
 
     /**
@@ -145,24 +156,7 @@ class DummyCheckoutRenderer
      */
     protected function renderNameFields(string $customHeading = ''): void
     {
-        ?>
-        <div class="fct_checkout_form_section fct_name_fields_section">
-            <div class="fct_form_group_row">
-                <div class="fct_form_group fct_form_group_half">
-                    <label class="fct_form_label"><?php esc_html_e('First Name', 'fluent-cart'); ?> <span class="required">*</span></label>
-                    <input type="text" class="fct_form_control" placeholder="<?php esc_attr_e('John', 'fluent-cart'); ?>" disabled>
-                </div>
-                <div class="fct_form_group fct_form_group_half">
-                    <label class="fct_form_label"><?php esc_html_e('Last Name', 'fluent-cart'); ?> <span class="required">*</span></label>
-                    <input type="text" class="fct_form_control" placeholder="<?php esc_attr_e('Doe', 'fluent-cart'); ?>" disabled>
-                </div>
-            </div>
-            <div class="fct_form_group">
-                <label class="fct_form_label"><?php esc_html_e('Email Address', 'fluent-cart'); ?> <span class="required">*</span></label>
-                <input type="email" class="fct_form_control" placeholder="<?php esc_attr_e('john@example.com', 'fluent-cart'); ?>" disabled>
-            </div>
-        </div>
-        <?php
+        (new CheckoutRenderer($this->cart))->renderNameFields();
     }
 
     /**
@@ -170,13 +164,20 @@ class DummyCheckoutRenderer
      */
     protected function renderCreateAccount(string $customHeading = ''): void
     {
-        $heading = $customHeading ?: __('Create Account', 'fluent-cart');
+        $heading = $customHeading ?: __('Create an account?', 'fluent-cart');
         ?>
-        <div class="fct_checkout_form_section fct_create_account_section">
-            <div class="fct_form_group">
-                <label class="fct_checkbox_label">
-                    <input type="checkbox" disabled>
-                    <span><?php echo esc_html($heading); ?></span>
+        <div class="fct_allow_create_account_wrapper">
+            <div class="fct_input_wrapper fct_input_wrapper_textarea" id="fct_wrapper_allow_create_account">
+                <label for="allow_create_account" class="fct_input_label fct_input_label_textarea">
+                    <input
+                        type="checkbox"
+                        class="fct-input fct-input-checkbox"
+                        id="allow_create_account"
+                        name="allow_create_account"
+                        value="yes"
+                        disabled
+                    >
+                    <?php echo esc_html($heading); ?>
                 </label>
             </div>
         </div>
@@ -192,31 +193,20 @@ class DummyCheckoutRenderer
         $showShipToDifferent = ($element['show_ship_to_different'] ?? 'yes') === 'yes';
         $customHeading = $element['custom_heading'] ?? '';
 
+        $renderer = new CheckoutRenderer($this->cart);
+
         ?>
         <div class="fct_checkout_billing_and_shipping">
             <?php if ($addressType === 'both' || $addressType === 'billing'): ?>
-                <div class="fct_checkout_form_section fct_billing_section">
-                    <h3 class="fct_form_section_heading"><?php echo esc_html($customHeading ?: __('Billing Address', 'fluent-cart')); ?></h3>
-                    <?php $this->renderAddressFieldsGroup(); ?>
-                </div>
+                <?php $renderer->renderBillingAddressFields(); ?>
             <?php endif; ?>
 
             <?php if ($addressType === 'both' && $showShipToDifferent): ?>
-                <div class="fct_checkout_form_section fct_ship_different_section">
-                    <div class="fct_form_group">
-                        <label class="fct_checkbox_label">
-                            <input type="checkbox" disabled>
-                            <span><?php esc_html_e('Ship to a different address?', 'fluent-cart'); ?></span>
-                        </label>
-                    </div>
-                </div>
+                <?php $renderer->renderShipToDifferentField(); ?>
             <?php endif; ?>
 
             <?php if ($addressType === 'shipping'): ?>
-                <div class="fct_checkout_form_section fct_shipping_section">
-                    <h3 class="fct_form_section_heading"><?php echo esc_html($customHeading ?: __('Shipping Address', 'fluent-cart')); ?></h3>
-                    <?php $this->renderAddressFieldsGroup(); ?>
-                </div>
+                <?php $renderer->renderShippingAddressFields(); ?>
             <?php endif; ?>
         </div>
         <?php
@@ -273,24 +263,8 @@ class DummyCheckoutRenderer
     {
         $heading = $customHeading ?: __('Shipping Method', 'fluent-cart');
         ?>
-        <div class="fct_checkout_form_section fct_checkout_shipping_methods">
-            <h3 class="fct_form_section_heading"><?php echo esc_html($heading); ?></h3>
-            <div class="fct_shipping_methods_list">
-                <div class="fct_shipping_method_item is-selected">
-                    <label class="fct_radio_label">
-                        <input type="radio" name="dummy_shipping" checked disabled>
-                        <span class="fct_shipping_method_title"><?php esc_html_e('Standard Shipping', 'fluent-cart'); ?></span>
-                        <span class="fct_shipping_method_price">$5.99</span>
-                    </label>
-                </div>
-                <div class="fct_shipping_method_item">
-                    <label class="fct_radio_label">
-                        <input type="radio" name="dummy_shipping" disabled>
-                        <span class="fct_shipping_method_title"><?php esc_html_e('Express Shipping', 'fluent-cart'); ?></span>
-                        <span class="fct_shipping_method_price">$12.99</span>
-                    </label>
-                </div>
-            </div>
+        <div class="fct_checkout_shipping_methods <?php echo $this->requireShipping ? '' : 'is-hidden' ?>">
+            <?php (new CheckoutRenderer($this->cart))->renderShippingOptions(); ?>
         </div>
         <?php
     }
@@ -300,27 +274,54 @@ class DummyCheckoutRenderer
      */
     protected function renderPaymentMethods(string $customHeading = ''): void
     {
+
         $heading = $customHeading ?: __('Payment Method', 'fluent-cart');
+        $card = Vite::getAssetUrl('images/payment-methods/card.svg');
+        $paypal = Vite::getAssetUrl('images/payment-methods/paypal-icon.svg');
+        $offlinePayment = Vite::getAssetUrl('images/payment-methods/offline-payment.svg');
         ?>
-        <div class="fct_checkout_form_section fct_checkout_payment_methods">
-            <h3 class="fct_form_section_heading"><?php echo esc_html($heading); ?></h3>
-            <div class="fct_payment_methods_list">
-                <div class="fct_payment_method_item is-selected">
-                    <label class="fct_radio_label">
-                        <input type="radio" name="dummy_payment" checked disabled>
-                        <span class="fct_payment_method_title"><?php esc_html_e('Credit Card', 'fluent-cart'); ?></span>
-                    </label>
-                    <div class="fct_payment_method_description">
-                        <?php esc_html_e('Pay securely with your credit card.', 'fluent-cart'); ?>
+        <div class="fct_checkout_payment_methods">
+            <div class="fct_checkout_form_section">
+                <div class="fct_form_section_header">
+                    <h4 id="payment_methods_label" class="fct_form_section_header_label">
+                        <?php echo esc_html($heading); ?>
+                    </h4>
+                </div>
+
+                <div class="fct_form_section_body">
+                    <div class="fct_payment_methods_list fct_payment_method_mode_logo">
+                        <div class="fct_payment_method_logo fct_payment_method_wrapper fct_payment_method_stripe active">
+                            <input class="form-radio-input" type="radio" name="_fct_pay_method" id="fluent_cart_payment_method_stripe" value="stripe" required="1" checked="true" role="radio" aria-checked="true">
+                            <label for="fluent_cart_payment_method_stripe">
+                                <img decoding="async" src="<?php echo esc_url($card); ?>" alt="Card">
+                                <?php esc_html_e('Card', 'fluent-cart'); ?>
+                            </label>
+                        </div>
+
+
+                        <div class="fct_payment_method_logo fct_payment_method_wrapper fct_payment_method_offline_payment" tabindex="0" role="presentation">
+                            <input class="form-radio-input" type="radio" name="_fct_pay_method" id="fluent_cart_payment_method_offline_payment" value="offline_payment" required="1" role="radio" aria-checked="false">
+                            <label for="fluent_cart_payment_method_offline_payment">
+                                <img decoding="async" src="<?php echo esc_url($offlinePayment); ?>" alt="Cash">
+                                Cash
+                            </label>
+                        </div>
+
+                        <div class="fct_payment_method_logo fct_payment_method_wrapper fct_payment_method_paypal">
+                            <input class="form-radio-input" type="radio" name="_fct_pay_method" id="fluent_cart_payment_method_paypal" value="paypal" required="1" role="radio" aria-checked="false">
+
+                            <label for="fluent_cart_payment_method_paypal">
+                                <img decoding="async" src="<?php echo esc_url($paypal); ?>" alt="PayPal">
+                                <?php esc_html_e('PayPal', 'fluent-cart'); ?>
+                            </label>
+                        </div>
+
+
                     </div>
                 </div>
-                <div class="fct_payment_method_item">
-                    <label class="fct_radio_label">
-                        <input type="radio" name="dummy_payment" disabled>
-                        <span class="fct_payment_method_title"><?php esc_html_e('PayPal', 'fluent-cart'); ?></span>
-                    </label>
-                </div>
             </div>
+
+
         </div>
         <?php
     }
@@ -330,16 +331,7 @@ class DummyCheckoutRenderer
      */
     protected function renderAgreeTerms(string $customHeading = ''): void
     {
-        ?>
-        <div class="fct_checkout_form_section fct_agree_terms_section">
-            <div class="fct_form_group">
-                <label class="fct_checkbox_label">
-                    <input type="checkbox" disabled>
-                    <span><?php esc_html_e('I agree to the terms and conditions', 'fluent-cart'); ?> <span class="required">*</span></span>
-                </label>
-            </div>
-        </div>
-        <?php
+        (new CheckoutRenderer($this->cart))->agreeTerms();
     }
 
     /**
@@ -363,13 +355,7 @@ class DummyCheckoutRenderer
      */
     protected function renderSubmitButton(): void
     {
-        ?>
-        <div class="fct_checkout_form_section fct_checkout_btn_wrap">
-            <button type="button" class="fct_checkout_btn fct_btn fct_btn_primary" disabled>
-                <?php esc_html_e('Place Order', 'fluent-cart'); ?>
-            </button>
-        </div>
-        <?php
+        (new CheckoutRenderer($this->cart))->renderCheckoutButton();
     }
 
     /**
@@ -384,7 +370,10 @@ class DummyCheckoutRenderer
         <div class="fct_summary active">
             <div class="fct_summary_box">
                 <div class="fct_checkout_form_section">
-                    <h3 class="fct_form_section_heading" id="order-summary-heading"><?php echo esc_html($summaryHeading); ?></h3>
+                    <div class="fct_form_section_header">
+                        <h4 id="order_summary_label"><?php echo esc_html($summaryHeading); ?></h4>
+                    </div>
+
                     <div class="fct_form_section_body">
                         <div class="fct_form_section_body_inner">
                             <?php $this->renderSummaryContent($summaryElements); ?>
@@ -437,35 +426,53 @@ class DummyCheckoutRenderer
     {
         ?>
         <div class="fct_items_wrapper">
-            <div class="fct_cart_items">
-                <div class="fct_cart_item">
-                    <div class="fct_cart_item_image">
-                        <div class="fct_cart_item_image_placeholder" style="width: 60px; height: 60px; background: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: #999; font-size: 24px;">&#128722;</span>
+            <div class="fct_line_items">
+                <div class="fct_line_item">
+                    <div class="fct_line_item_info">
+                        <div class="fct_item_image">
+                            <a href="#">
+                                <img decoding="async" src="https://placehold.co/600x400" alt="">
+                            </a>
+                        </div>
+                        <div class="fct_item_content">
+                            <div class="fct_item_title">
+                                <a href="#">
+                                    Social Ninja - The Ultimate Social Media Plugin for WordPress
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="fct_cart_item_details">
-                        <div class="fct_cart_item_title"><?php esc_html_e('Sample Product', 'fluent-cart'); ?></div>
-                        <div class="fct_cart_item_meta">
-                            <span class="fct_cart_item_qty"><?php esc_html_e('Qty: 1', 'fluent-cart'); ?></span>
-                        </div>
+
+                    <div class="fct_line_item_price">
+                        <span class="fct_line_item_total">
+                            $200.00
+                        </span>
                     </div>
-                    <div class="fct_cart_item_price">$49.99</div>
                 </div>
-                <div class="fct_cart_item">
-                    <div class="fct_cart_item_image">
-                        <div class="fct_cart_item_image_placeholder" style="width: 60px; height: 60px; background: #f0f0f0; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
-                            <span style="color: #999; font-size: 24px;">&#128722;</span>
+
+                <div class="fct_line_item">
+                    <div class="fct_line_item_info">
+                        <div class="fct_item_image">
+                            <a href="#">
+                                <img decoding="async" src="https://placehold.co/600x400" alt="">
+                            </a>
+                        </div>
+                        <div class="fct_item_content">
+                            <div class="fct_item_title">
+                                <a href="#">
+                                    Fluent Support – Helpdesk & Customer Support Ticket System
+                                </a>
+                            </div>
                         </div>
                     </div>
-                    <div class="fct_cart_item_details">
-                        <div class="fct_cart_item_title"><?php esc_html_e('Another Product', 'fluent-cart'); ?></div>
-                        <div class="fct_cart_item_meta">
-                            <span class="fct_cart_item_qty"><?php esc_html_e('Qty: 2', 'fluent-cart'); ?></span>
-                        </div>
+
+                    <div class="fct_line_item_price">
+                        <span class="fct_line_item_total">
+                            $300.00
+                        </span>
                     </div>
-                    <div class="fct_cart_item_price">$29.99</div>
                 </div>
+
             </div>
         </div>
         <?php
