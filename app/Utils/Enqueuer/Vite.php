@@ -45,14 +45,7 @@ class Vite extends Enqueuer
             return;
         }
 
-        $manifestPath = App::make('path.assets') . '.vite/manifest.json';
-
-        if (!file_exists($manifestPath)) {
-            throw new \Exception('Vite Manifest Not Found. Run : npm run dev or npm run prod');
-        }
-        $manifestFile = fopen($manifestPath, "r");
-        $manifestData = fread($manifestFile, filesize($manifestPath));
-        (static::$instance)->manifestData = json_decode($manifestData, true);
+        (static::$instance)->manifestData = App::getInstance('config')->get('vite_config');;
     }
 
     private function enqueueScript($handle, $src, $dependency = [], $version = null, $inFooter = false)
