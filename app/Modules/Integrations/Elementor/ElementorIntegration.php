@@ -27,6 +27,7 @@ class ElementorIntegration
             return;
         }
 
+        \add_action('elementor/elements/categories_registered', [$this, 'registerCategories']);
         \add_action('elementor/widgets/register', [$this, 'registerWidgets']);
         \add_action('elementor/controls/register', [$this, 'registerControls']);
         \add_action('elementor/editor/after_enqueue_scripts', [$this, 'enqueueEditorScripts']);
@@ -34,13 +35,19 @@ class ElementorIntegration
         \add_filter('fluent_cart/products_views/preload_collection_elementor', [$this, 'preloadProductCollectionsAjax'], 10, 2);
     }
 
+    public function registerCategories($elements_manager)
+    {
+        $elements_manager->add_category('fluent-cart', [
+            'title' => esc_html__('FluentCart', 'fluent-cart'),
+            'icon'  => 'fa fa-shopping-cart',
+        ]);
+    }
+
     public function registerWidgets($widgets_manager)
     {
         $widgets_manager->register(new AddToCartWidget());
         $widgets_manager->register(new BuyNowWidget());
-        if(class_exists(MiniCartRenderer::class)){
-            $widgets_manager->register(new MiniCartWidget());
-        }
+        $widgets_manager->register(new MiniCartWidget());
         $widgets_manager->register(new ShopAppWidget());
         $widgets_manager->register(new ProductCarouselWidget());
         $widgets_manager->register(new ProductCategoriesListWidget());

@@ -45,7 +45,7 @@ class Vite extends Enqueuer
             return;
         }
 
-        $manifestPath = App::make('path.assets') .DIRECTORY_SEPARATOR. '.vite/manifest.json';
+        $manifestPath = App::make('path.assets') . '.vite/manifest.json';
 
         if (!file_exists($manifestPath)) {
             throw new \Exception('Vite Manifest Not Found. Run : npm run dev or npm run prod');
