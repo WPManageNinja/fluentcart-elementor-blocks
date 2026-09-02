@@ -151,9 +151,10 @@ class CheckoutWidget extends Widget_Base
                         'type'       => Controls_Manager::SLIDER,
                         'size_units' => ['%'],
                         'range'      => [
-                                '%' => ['min' => 30, 'max' => 80],
+                                '%' => ['min' => 30, 'max' => 100],
                         ],
-                        'default'    => ['size' => 65, 'unit' => '%'],
+                        'default'        => ['size' => 65, 'unit' => '%'],
+                        'mobile_default' => ['size' => 100, 'unit' => '%'],
                         'selectors'  => [
                                 '{{WRAPPER}} .fce-checkout-form-column' => 'width: {{SIZE}}{{UNIT}};',
                         ],
@@ -170,9 +171,10 @@ class CheckoutWidget extends Widget_Base
                         'type'       => Controls_Manager::SLIDER,
                         'size_units' => ['%'],
                         'range'      => [
-                                '%' => ['min' => 20, 'max' => 70],
+                                '%' => ['min' => 20, 'max' => 100],
                         ],
-                        'default'    => ['size' => 35, 'unit' => '%'],
+                        'default'        => ['size' => 35, 'unit' => '%'],
+                        'mobile_default' => ['size' => 100, 'unit' => '%'],
                         'selectors'  => [
                                 '{{WRAPPER}} .fce-checkout-summary-column' => 'width: {{SIZE}}{{UNIT}};',
                         ],
